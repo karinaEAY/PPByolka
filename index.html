@@ -14,6 +14,8 @@
             overflow: hidden;
             background: url('https://wsrv.nl/?url=torange.biz/photo/15/IMAGE/texture-blurred-backgrounds-christmas-background-15110.jpg') no-repeat center center fixed;
             background-size: cover;
+            /* Prevent zooming on double-tap */
+            touch-action: manipulation;
         }
 
         /* Snow animation */
@@ -65,9 +67,9 @@
         .phone-item {
             position: absolute;
             z-index: 20; 
-            /* Fixed dimensions for consistency */
-            width: 90px; 
-            height: 140px;
+            /* Fixed dimensions for consistency, made larger */
+            width: 120px; /* Increased from 90px */
+            height: 180px; /* Increased from 140px */
             object-fit: contain; 
             filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5));
             transition: transform 0.3s;
@@ -131,7 +133,7 @@
         
         /* Captured phones in success modal */
         .captured-phone {
-            width: 50px;
+            width: 65px; /* Increased from 50px */
             height: auto;
             filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
             animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
@@ -147,31 +149,25 @@
 </head>
 <body class="h-screen w-full relative overflow-hidden">
 
-    <!-- Snow Container -->
-    <div id="snow-container"></div>
+    <!-- Snow Container --><div id="snow-container"></div>
 
-    <!-- Instruction Text -->
-    <div id="instruction" class="absolute top-10 w-full text-center z-30 pointer-events-none">
+    <!-- Instruction Text --><div id="instruction" class="absolute top-10 w-full text-center z-30 pointer-events-none">
         <h1 class="text-2xl md:text-4xl font-black text-white instruction-text drop-shadow-lg uppercase">
             Shake the tree <br>to get a gift!
         </h1>
     </div>
 
-    <!-- Main Scene -->
-    <main class="h-full w-full flex flex-col items-center justify-end relative">
+    <!-- Main Scene --><main class="h-full w-full flex flex-col items-center justify-end relative">
         
-        <!-- Tree Area (Clickable) -->
-        <div id="tree-wrapper" class="relative z-10 cursor-hand transition-transform origin-bottom mb-20 md:mb-10">
+        <!-- Tree Area (Clickable) --><div id="tree-wrapper" class="relative z-10 cursor-hand transition-transform origin-bottom mb-10 md:mb-5">
             <div id="tree-container" class="relative flex justify-center">
-                <!-- Using proxy for tree image -->
-                <img src="https://wsrv.nl/?url=pngimg.com/uploads/fir_tree/fir_tree_PNG3724.png" 
+                <!-- Using proxy for tree image --><img src="https://wsrv.nl/?url=pngimg.com/uploads/fir_tree/fir_tree_PNG3724.png" 
                      alt="Christmas Tree" 
-                     class="h-[60vh] md:h-[75vh] object-contain filter drop-shadow-2xl brightness-110 select-none">
+                     class="h-[75vh] md:h-[90vh] object-contain filter drop-shadow-2xl brightness-110 select-none">
             </div>
         </div>
 
-        <!-- Basket Image -->
-        <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-30 w-40 md:w-48 pointer-events-none">
+        <!-- Basket Image, made larger --><div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-30 w-52 md:w-64 pointer-events-none">
             <img src="https://storage.googleapis.com/multi-static-content/previews/artage-io-thumb-aa2ed0e8a500dd18dbad0a66415da9c3.png" 
                  alt="Shopping Basket" 
                  class="w-full h-auto object-contain drop-shadow-2xl">
@@ -179,11 +175,9 @@
 
     </main>
 
-    <!-- Modal Overlay -->
-    <div id="modal-overlay" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm">
+    <!-- Modal Overlay --><div id="modal-overlay" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm">
         
-        <!-- Input Form -->
-        <div id="input-card" class="custom-modal rounded-3xl p-6 w-[90%] max-w-md transform transition-all duration-500 scale-0 opacity-0">
+        <!-- Input Form --><div id="input-card" class="custom-modal rounded-3xl p-6 w-[90%] max-w-md transform transition-all duration-500 scale-0 opacity-0">
             <h2 class="text-3xl font-black text-center text-pink-600 mb-2 drop-shadow-md uppercase">Enter Details</h2>
             <p class="text-center text-gray-600 mb-6 text-sm font-bold">To claim your gift</p>
             
@@ -206,23 +200,19 @@
             </form>
         </div>
 
-        <!-- Success Card -->
-        <div id="success-card" class="hidden custom-modal rounded-3xl p-8 w-[90%] max-w-md flex flex-col items-center text-center transform scale-100">
+        <!-- Success Card --><div id="success-card" class="hidden custom-modal rounded-3xl p-8 w-[90%] max-w-md flex flex-col items-center text-center transform scale-100">
             <div class="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center mb-4 shadow-lg animate-bounce">
                 <i class="fas fa-check text-white text-5xl"></i>
             </div>
             <h2 class="text-3xl font-black text-pink-600 mb-2 uppercase">Success!</h2>
             <p class="text-xl font-bold text-gray-700">Your phones are on the way!</p>
             
-            <!-- Container for displaying caught phones -->
-            <div id="caught-phones-display" class="flex justify-center gap-4 mt-6 mb-4 p-4 bg-pink-50 rounded-xl border border-pink-100 w-full">
-                <!-- Images will be injected here -->
-            </div>
+            <!-- Container for displaying caught phones --><div id="caught-phones-display" class="flex justify-center gap-4 mt-6 mb-4 p-4 bg-pink-50 rounded-xl border border-pink-100 w-full">
+                <!-- Images will be injected here --></div>
 
             <p class="text-sm text-gray-500">Wait for the courier's call.</p>
             
-            <!-- Fireworks -->
-            <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <!-- Fireworks --><div class="absolute inset-0 overflow-hidden pointer-events-none">
                 <div class="absolute top-10 left-10 text-yellow-400 text-4xl animate-ping">✨</div>
                 <div class="absolute bottom-10 right-10 text-yellow-400 text-4xl animate-ping delay-300">✨</div>
             </div>
@@ -251,14 +241,14 @@
 
         // 2. Phone Data (Using wsrv.nl proxy for image stability)
         const phoneUrls = [
-            "https://wsrv.nl/?url=my-apple.com.ua/image/catalog/products/iphone/iphone-17-pro-max/iphone-17-pro-max-cosmic-orange-1.png",
+            "https://my-apple.com.ua/image/catalog/products/iphone/iphone-17-pro-max/iphone-17-pro-max-cosmic-orange-1.png", // New top phone
             "https://wsrv.nl/?url=my-apple.com.ua/image/catalog/products/iphone/iphone-17-pro-max/iphone-17-pro-max-silver-1.png",
             "https://wsrv.nl/?url=my-apple.com.ua/image/catalog/products/iphone/iphone-17-pro-max/iphone-17-pro-max-deep-blue-1.png",
             "https://wsrv.nl/?url=yabloki.ua/media/cache/sylius_shop_product_original/f8/c4/iphone-16-pro-max-1tb-desert-titanium-e-sim_237130ed-32a0-4a39-a38e-f6fe0b96f0d8-5.png.webp",
             "https://wsrv.nl/?url=my-apple.com.ua/image/cache/catalog/products/iphone/iphone-14-pro-14-pro-max/space-black-1-700x700.png",
             "https://wsrv.nl/?url=my-apple.com.ua/image/catalog/products/iphone/iphone-13-pro-13-pro-max/sierra-blue-1.png",
-            "https://wsrv.nl/?url=appleroom.ua/wa-data/public/shop/products/17/24/12417/images/19867/19867.750.png",
-            "https://wsrv.nl/?url=cdn.comfy.ua/media/x/img3/2601131/img3.png"
+            "https://wsrv.nl/?url=cdn.comfy.ua/media/x/img3/2601131/img3.png", // Old top phone, moved to bottom tier center (index 6)
+            "https://my-apple.com.ua/image/catalog/products/iphone/iphone-16-pro-16-pro-max/natural-titanium-1.png" // Old bottom right phone
         ];
 
         // 3. Game State
@@ -279,14 +269,14 @@
 
             // UPDATED SLOTS: Maximize tree coverage
             const slots = [
-                { y: 12, x: 0 },     // Top
-                { y: 28, x: -7 },    // Top tier left
-                { y: 28, x: 7 },     // Top tier right
-                { y: 45, x: -12 },   // Middle tier left (wider)
-                { y: 45, x: 12 },    // Middle tier right (wider)
-                { y: 62, x: -18 },   // Bottom tier left
-                { y: 62, x: 0 },     // Bottom tier center
-                { y: 62, x: 18 }     // Bottom tier right
+                { y: 12, x: 0 },     // Top (index 0)
+                { y: 28, x: -7 },    // Top tier left (index 1)
+                { y: 28, x: 7 },     // Top tier right (index 2)
+                { y: 45, x: -12 },   // Middle tier left (wider) (index 3)
+                { y: 45, x: 12 },    // Middle tier right (wider) (index 4)
+                { y: 62, x: -18 },   // Bottom tier left (index 5)
+                { y: 62, x: 0 },     // Bottom tier center (index 6) - where old top phone goes
+                { y: 62, x: 18 }     // Bottom tier right (index 7) - where old bottom right phone goes
             ];
 
             phoneUrls.forEach((url, index) => {
@@ -296,6 +286,13 @@
                 img.src = url;
                 img.className = 'phone-item';
                 
+                // Manual visual adjustment for the bottom center phone (index 6)
+                // Further decreased its size to make it visually align with others
+                if (index === 6) {
+                    img.style.width = '80px'; // Further reduced
+                    img.style.height = '120px'; // Further reduced
+                }
+
                 const slot = slots[index];
                 const randomY = (Math.random() - 0.5) * 2;
                 const randomX = (Math.random() - 0.5) * 5;
@@ -345,14 +342,18 @@
             const rect = phoneToDrop.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
+            
+            // Capture current size before moving (to preserve custom size for index 6 if it's dropped)
+            const currentWidth = phoneToDrop.style.width || '120px';
+            const currentHeight = phoneToDrop.style.height || '180px';
 
             document.body.appendChild(phoneToDrop);
             phoneToDrop.className = 'phone-item phone-falling';
             
             phoneToDrop.style.left = centerX + 'px';
             phoneToDrop.style.top = centerY + 'px';
-            phoneToDrop.style.width = '90px'; // Maintain fixed size when falling
-            phoneToDrop.style.height = '140px';
+            phoneToDrop.style.width = currentWidth; 
+            phoneToDrop.style.height = currentHeight;
             phoneToDrop.style.transform = `translate(-50%, -50%) rotate(${phoneToDrop.dataset.rotation}deg)`;
 
             phoneToDrop.style.setProperty('--start-left', centerX + 'px');
