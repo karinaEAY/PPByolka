@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Christmas iPhone Giveaway</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+            background: url('https://wsrv.nl/?url=torange.biz/photo/15/IMAGE/texture-blurred-backgrounds-christmas-background-15110.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        /* Snow animation */
+        .snowflake {
+            position: absolute;
+            top: -10px;
+            color: #fff;
+            animation: fall linear infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(105vh); }
+        }
+
+        /* Shake animation for the tree */
+        @keyframes shakeTree {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            50% { transform: rotate(-5deg); }
+            75% { transform: rotate(3deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        .shaking {
+            animation: shakeTree 0.5s ease-in-out;
+        }
+
+        /* Phone falling animation */
+        @keyframes dropIntoBasket {
+            0% { 
+                transform: translate(-50%, -50%) rotate(var(--start-rotation)); 
+                left: var(--start-left);
+                top: var(--start-top);
+                opacity: 1;
+            }
+            20% { 
+                transform: translate(-50%, -50%) rotate(var(--fall-rotation)); 
+            } 
+            100% { 
+                top: 92vh; 
+                left: 50%; 
+                transform: translate(-50%, -50%) rotate(var(--end-rotation)) scale(0.5); 
+                opacity: 0; 
+            } 
+        }
+
+        .phone-item {
+            position: absolute;
+            z-index: 20; 
+            /* Fixed dimensions for consistency */
+            width: 90px; 
+            height: 140px;
+            object-fit: contain; 
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5));
+            transition: transform 0.3s;
+            cursor: default;
+            transform-origin: top center;
+        }
+        
+        .phone-falling {
+            position: fixed; 
+            z-index: 25; 
+            pointer-events: none;
+            transform-origin: center center;
+        }
+        
+        .phone-item:hover {
+            transform: scale(1.1);
+        }
+
+        /* Modal Styles */
+        .custom-modal {
+            background: rgba(255, 255, 255, 0.95);
+            border: 5px solid #d946ef; 
+            box-shadow: 0 0 20px #d946ef, 0 0 60px #d946ef;
+        }
+        
+        .input-field {
+            transition: all 0.3s;
+        }
+        .input-field:focus {
+            transform: scale(1.02);
+            box-shadow: 0 0 10px rgba(217, 70, 239, 0.5);
+        }
+
+        .btn-get {
+            background: #22c55e;
+            box-shadow: 0 4px 0 #15803d;
+            transition: all 0.1s;
+        }
+        .btn-get:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #15803d;
+        }
+        .btn-get:disabled {
+            background: #86efac;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .cursor-hand {
+            cursor: pointer;
+        }
+        
+        @keyframes pulse-text {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        .instruction-text {
+            animation: pulse-text 2s infinite;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        /* Captured phones in success modal */
+        .captured-phone {
+            width: 50px;
+            height: auto;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            opacity: 0;
+            transform: scale(0);
+        }
+        
+        @keyframes popIn {
+            to { opacity: 1; transform: scale(1); }
+        }
+
+    </style>
+</head>
+<body class="h-screen w-full relative overflow-hidden">
+
+    <!-- Snow Container -->
+    <div id="snow-container"></div>
+
+    <!-- Instruction Text -->
+    <div id="instruction" class="absolute top-10 w-full text-center z-30 pointer-events-none">
+        <h1 class="text-2xl md:text-4xl font-black text-white instruction-text drop-shadow-lg uppercase">
+            Shake the tree <br>to get a gift!
+        </h1>
+    </div>
+
+    <!-- Main Scene -->
+    <main class="h-full w-full flex flex-col items-center justify-end relative">
+        
+        <!-- Tree Area (Clickable) -->
+        <div id="tree-wrapper" class="relative z-10 cursor-hand transition-transform origin-bottom mb-20 md:mb-10">
+            <div id="tree-container" class="relative flex justify-center">
+                <!-- Using proxy for tree image -->
+                <img src="https://wsrv.nl/?url=pngimg.com/uploads/fir_tree/fir_tree_PNG3724.png" 
+                     alt="Christmas Tree" 
+                     class="h-[60vh] md:h-[75vh] object-contain filter drop-shadow-2xl brightness-110 select-none">
+            </div>
+        </div>
+
+        <!-- Basket Image -->
+        <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-30 w-40 md:w-48 pointer-events-none">
+            <img src="https://storage.googleapis.com/multi-static-content/previews/artage-io-thumb-aa2ed0e8a500dd18dbad0a66415da9c3.png" 
+                 alt="Shopping Basket" 
+                 class="w-full h-auto object-contain drop-shadow-2xl">
+        </div>
+
+    </main>
+
+    <!-- Modal Overlay -->
+    <div id="modal-overlay" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm">
+        
+        <!-- Input Form -->
+        <div id="input-card" class="custom-modal rounded-3xl p-6 w-[90%] max-w-md transform transition-all duration-500 scale-0 opacity-0">
+            <h2 class="text-3xl font-black text-center text-pink-600 mb-2 drop-shadow-md uppercase">Enter Details</h2>
+            <p class="text-center text-gray-600 mb-6 text-sm font-bold">To claim your gift</p>
+            
+            <form id="claim-form" class="space-y-4">
+                <div>
+                    <label class="block text-pink-600 font-bold text-lg ml-2 mb-1">Name</label>
+                    <input type="text" id="name" required placeholder="Your Name" 
+                           class="input-field w-full p-4 rounded-xl text-xl border-2 border-pink-200 focus:border-pink-500 outline-none font-bold text-gray-700 text-center">
+                </div>
+                
+                <div>
+                    <label class="block text-pink-600 font-bold text-lg ml-2 mb-1">Address</label>
+                    <input type="text" id="address" required placeholder="City, Street" 
+                           class="input-field w-full p-4 rounded-xl text-xl border-2 border-pink-200 focus:border-pink-500 outline-none font-bold text-gray-700 text-center">
+                </div>
+
+                <button type="submit" class="btn-get w-full py-4 rounded-xl text-white text-2xl font-black tracking-widest mt-4 uppercase">
+                    GET
+                </button>
+            </form>
+        </div>
+
+        <!-- Success Card -->
+        <div id="success-card" class="hidden custom-modal rounded-3xl p-8 w-[90%] max-w-md flex flex-col items-center text-center transform scale-100">
+            <div class="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center mb-4 shadow-lg animate-bounce">
+                <i class="fas fa-check text-white text-5xl"></i>
+            </div>
+            <h2 class="text-3xl font-black text-pink-600 mb-2 uppercase">Success!</h2>
+            <p class="text-xl font-bold text-gray-700">Your phones are on the way!</p>
+            
+            <!-- Container for displaying caught phones -->
+            <div id="caught-phones-display" class="flex justify-center gap-4 mt-6 mb-4 p-4 bg-pink-50 rounded-xl border border-pink-100 w-full">
+                <!-- Images will be injected here -->
+            </div>
+
+            <p class="text-sm text-gray-500">Wait for the courier's call.</p>
+            
+            <!-- Fireworks -->
+            <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                <div class="absolute top-10 left-10 text-yellow-400 text-4xl animate-ping">✨</div>
+                <div class="absolute bottom-10 right-10 text-yellow-400 text-4xl animate-ping delay-300">✨</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // 1. Snow Logic
+        function createSnow() {
+            const container = document.getElementById('snow-container');
+            const snowflakeCount = 50;
+
+            for (let i = 0; i < snowflakeCount; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.classList.add('snowflake');
+                snowflake.innerHTML = '❄';
+                snowflake.style.left = Math.random() * 100 + 'vw';
+                snowflake.style.fontSize = (Math.random() * 10 + 10) + 'px';
+                snowflake.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                snowflake.style.opacity = Math.random();
+                snowflake.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(snowflake);
+            }
+        }
+
+        // 2. Phone Data (Using wsrv.nl proxy for image stability)
+        const phoneUrls = [
+            "https://wsrv.nl/?url=my-apple.com.ua/image/catalog/products/iphone/iphone-17-pro-max/iphone-17-pro-max-cosmic-orange-1.png",
+            "https://wsrv.nl/?url=my-apple.com.ua/image/catalog/products/iphone/iphone-17-pro-max/iphone-17-pro-max-silver-1.png",
+            "https://wsrv.nl/?url=my-apple.com.ua/image/catalog/products/iphone/iphone-17-pro-max/iphone-17-pro-max-deep-blue-1.png",
+            "https://wsrv.nl/?url=yabloki.ua/media/cache/sylius_shop_product_original/f8/c4/iphone-16-pro-max-1tb-desert-titanium-e-sim_237130ed-32a0-4a39-a38e-f6fe0b96f0d8-5.png.webp",
+            "https://wsrv.nl/?url=my-apple.com.ua/image/cache/catalog/products/iphone/iphone-14-pro-14-pro-max/space-black-1-700x700.png",
+            "https://wsrv.nl/?url=my-apple.com.ua/image/catalog/products/iphone/iphone-13-pro-13-pro-max/sierra-blue-1.png",
+            "https://wsrv.nl/?url=appleroom.ua/wa-data/public/shop/products/17/24/12417/images/19867/19867.750.png",
+            "https://wsrv.nl/?url=cdn.comfy.ua/media/x/img3/2601131/img3.png"
+        ];
+
+        // 3. Game State
+        let phonesDropped = 0;
+        const maxPhones = 3;
+        const treeWrapper = document.getElementById('tree-wrapper');
+        const treeContainer = document.getElementById('tree-container');
+        const instruction = document.getElementById('instruction');
+        
+        let activePhones = [];
+        let collectedPhones = []; 
+
+        function decorateTree() {
+            const existing = treeContainer.querySelectorAll('.phone-item');
+            existing.forEach(e => e.remove());
+            activePhones = [];
+            collectedPhones = [];
+
+            // UPDATED SLOTS: Maximize tree coverage
+            const slots = [
+                { y: 12, x: 0 },     // Top
+                { y: 28, x: -7 },    // Top tier left
+                { y: 28, x: 7 },     // Top tier right
+                { y: 45, x: -12 },   // Middle tier left (wider)
+                { y: 45, x: 12 },    // Middle tier right (wider)
+                { y: 62, x: -18 },   // Bottom tier left
+                { y: 62, x: 0 },     // Bottom tier center
+                { y: 62, x: 18 }     // Bottom tier right
+            ];
+
+            phoneUrls.forEach((url, index) => {
+                if (index >= slots.length) return;
+
+                const img = document.createElement('img');
+                img.src = url;
+                img.className = 'phone-item';
+                
+                const slot = slots[index];
+                const randomY = (Math.random() - 0.5) * 2;
+                const randomX = (Math.random() - 0.5) * 5;
+
+                const topVal = slot.y + randomY;
+                // Increased spacing
+                const leftVal = slot.x * 5.5; 
+
+                img.style.top = `${topVal}%`;
+                img.style.left = `calc(50% + ${leftVal}px + ${randomX}px)`;
+                
+                const initialRotation = (Math.random() - 0.5) * 20;
+                img.style.transform = `translate(-50%, 0) rotate(${initialRotation}deg)`;
+                
+                img.dataset.rotation = initialRotation;
+                img.dataset.url = url; 
+
+                treeContainer.appendChild(img);
+                activePhones.push(img);
+            });
+        }
+
+        treeWrapper.addEventListener('click', handleTreeClick);
+
+        function handleTreeClick() {
+            if (phonesDropped >= maxPhones) return; 
+
+            treeWrapper.classList.remove('shaking');
+            void treeWrapper.offsetWidth; 
+            treeWrapper.classList.add('shaking');
+
+            if (activePhones.length > 0) {
+                setTimeout(() => {
+                    dropRandomPhone();
+                }, 250);
+            }
+        }
+
+        function dropRandomPhone() {
+            const randomIndex = Math.floor(Math.random() * activePhones.length);
+            const phoneToDrop = activePhones[randomIndex];
+            activePhones.splice(randomIndex, 1);
+
+            collectedPhones.push(phoneToDrop.dataset.url);
+
+            // Detach logic
+            const rect = phoneToDrop.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            document.body.appendChild(phoneToDrop);
+            phoneToDrop.className = 'phone-item phone-falling';
+            
+            phoneToDrop.style.left = centerX + 'px';
+            phoneToDrop.style.top = centerY + 'px';
+            phoneToDrop.style.width = '90px'; // Maintain fixed size when falling
+            phoneToDrop.style.height = '140px';
+            phoneToDrop.style.transform = `translate(-50%, -50%) rotate(${phoneToDrop.dataset.rotation}deg)`;
+
+            phoneToDrop.style.setProperty('--start-left', centerX + 'px');
+            phoneToDrop.style.setProperty('--start-top', centerY + 'px');
+            phoneToDrop.style.setProperty('--start-rotation', phoneToDrop.dataset.rotation + 'deg');
+            phoneToDrop.style.setProperty('--fall-rotation', (Math.random() * 360) + 'deg');
+            phoneToDrop.style.setProperty('--end-rotation', (Math.random() * 720) + 'deg');
+
+            phoneToDrop.style.animation = `dropIntoBasket 0.8s cubic-bezier(0.5, 0, 0.8, 1) forwards`;
+            
+            phonesDropped++;
+
+            if (phonesDropped === maxPhones) {
+                 setTimeout(() => {
+                    instruction.innerHTML = '<h1 class="text-3xl md:text-5xl font-black text-white drop-shadow-lg uppercase text-green-400">WINNER!</h1>';
+                }, 500);
+                setTimeout(showForm, 1500);
+            }
+        }
+
+        // 3. Form Logic
+        const modalOverlay = document.getElementById('modal-overlay');
+        const inputCard = document.getElementById('input-card');
+        const successCard = document.getElementById('success-card');
+        const form = document.getElementById('claim-form');
+        const caughtPhonesDisplay = document.getElementById('caught-phones-display');
+
+        function showForm() {
+            modalOverlay.classList.remove('hidden');
+            setTimeout(() => {
+                inputCard.classList.remove('scale-0', 'opacity-0');
+                inputCard.classList.add('scale-100', 'opacity-100');
+            }, 100);
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const address = document.getElementById('address').value;
+
+            if(name && address) {
+                const btn = form.querySelector('button');
+                btn.innerText = 'PROCESSING...';
+                btn.disabled = true;
+
+                setTimeout(() => {
+                    inputCard.classList.add('hidden');
+                    successCard.classList.remove('hidden');
+                    
+                    caughtPhonesDisplay.innerHTML = '';
+                    collectedPhones.forEach((url, i) => {
+                        const img = document.createElement('img');
+                        img.src = url;
+                        img.className = 'captured-phone';
+                        img.style.animationDelay = `${i * 0.2}s`; 
+                        caughtPhonesDisplay.appendChild(img);
+                    });
+
+                }, 1500);
+            }
+        });
+
+        window.onload = () => {
+            createSnow();
+            decorateTree();
+        };
+
+    </script>
+</body>
+</html>
